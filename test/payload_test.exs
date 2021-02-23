@@ -43,7 +43,7 @@ defmodule AbsintheErrorPayload.PayloadTest do
   end
 
   def assert_error_payload(messages, result) do
-    assert %{value: value, errors: []} = result
+    assert %{value: value, errors: _} = result
 
     expected = payload(false, messages)
 
@@ -56,6 +56,10 @@ defmodule AbsintheErrorPayload.PayloadTest do
       assert Enum.find_value(value.messages, &(message == &1)),
              "Expected to find \n#{inspect(message)}\n in \n#{inspect(value.messages)}"
     end
+  end
+
+  def assert_resolution_error_payload(errors, resolution) do
+    assert errors == resolution.errors
   end
 
   describe "build_payload/2" do
@@ -160,26 +164,32 @@ defmodule AbsintheErrorPayload.PayloadTest do
       result = build_payload(resolution, nil)
 
       assert_error_payload([message], result)
+      assert_resolution_error_payload([message], result)
     end
 
     test "error from resolution, string message" do
-      resolution = resolution_error(["an error"])
+      errors = ["an error"]
+      resolution = resolution_error(errors)
       result = build_payload(resolution, nil)
 
       message = %ValidationMessage{code: :unknown, message: "an error", template: "an error"}
       assert_error_payload([message], result)
+      assert_resolution_error_payload(errors, result)
     end
 
     test "error from resolution, atom message" do
-      resolution = resolution_error([:an_error])
+      errors = [:an_error]
+      resolution = resolution_error(errors)
       result = build_payload(resolution, nil)
 
       message = %ValidationMessage{code: :unknown, message: "an_error", template: "an_error"}
       assert_error_payload([message], result)
+      assert_resolution_error_payload(errors, result)
     end
 
     test "error from resolution, string message list" do
-      resolution = resolution_error(["an error", "another error"])
+      errors = ["an error", "another error"]
+      resolution = resolution_error(errors)
       result = build_payload(resolution, nil)
 
       messages = [
@@ -188,6 +198,7 @@ defmodule AbsintheErrorPayload.PayloadTest do
       ]
 
       assert_error_payload(messages, result)
+      assert_resolution_error_payload(errors, resolution)
     end
 
     test "error from resolution, error list" do
