@@ -223,20 +223,6 @@ defmodule AbsintheErrorPayload.Payload do
     %{resolution | value: result, errors: errors}
   end
 
-  # def build_payload(%{errors: [%ValidationMessage{}, _] = errors} = resolution, _config) do
-  #   result = convert_to_payload({:error, errors})
-  #   %{resolution | value: result, errors: []}
-  # end
-
-  # def build_payload(%{errors: [%ValidationMessage{}] = errors} = resolution, _config) do
-  #   result = convert_to_payload({:error, errors})
-  #   %{resolution | value: result, errors: []}
-  # end
-
-  # def build_payload(%{errors: _errors} = resolution, _config) do
-  #   resolution
-  # end
-
   @doc """
   Direct converter from value to a `Payload` struct.
 
